@@ -1,0 +1,102 @@
+---
+title: "Data Science Capstone Assignment 1"
+author: "Laurens de Wit"
+date: "12th of April 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(stringi)
+library(RWeka)
+library(qdap)
+library(tm)
+library(NLP)
+```
+
+## Loading in Data
+
+First, we'll load in the data:
+
+```{r cars}
+# Blogs file
+blogs<-file("./en_US/en_US.blogs.txt","r")
+blogs_lines<-readLines(blogs)
+close(blogs)
+
+# News file
+news<-file("./en_US/en_US.news.txt","r")
+news_lines<-readLines(news)
+close(news)
+
+# Twitter file
+twitter<-file("./en_US/en_US.twitter.txt","r")
+twitter_lines<-readLines(twitter)
+close(twitter)
+```
+
+## Summaries of the data
+
+Let's first look at the structure of the lines for each dataset:
+
+Blogs
+
+```{r, echo=FALSE}
+summary(nchar(blogs_lines))
+```
+
+News
+
+```{r}
+summary(nchar(news_lines))
+```
+
+Twitter
+
+```{r}
+summary(nchar(twitter_lines))
+```
+
+## Sampling
+
+Now that we know a couple of details about the structure of the data, it is time to reduce the datasets to samples. This is needed for computational speed as the original datasets are very large.
+
+```{r, echo=TRUE}
+set.seed(100)
+
+sample_size = 1000
+
+sample_blog <- blogs_lines[sample(1:length(blogs_lines),sample_size)]
+sample_news <- news_lines[sample(1:length(news_lines),sample_size)]
+sample_twitter <- twitter_lines[sample(1:length(twitter_lines),sample_size)]
+```
+
+Next, we can combine these data sets and remove the large original files from memory:
+
+```{r}
+sample_data<-rbind(sample_blog,sample_news,sample_twitter)
+rm(blogs_lines,news_lines,twitter_lines)
+```
+
+## Cleaning
+
+After obtaining our samples we can start cleaning the data:
+
+```{r}
+## Splttings turns of talk into individual setences.
+clean_data <- sent_detect(sample_data)
+## Setting all characters to lower case.
+clean_data <- tolower(clean_data)
+## Removing all numbers from the data set.
+clean_data <- removeNumbers(clean_data)
+## Removing all punctuation.
+clean_data <- removePunctuation(clean_data)
+## Removing all whitespaces in case there is more than one.
+clean_data <- stripWhitespace(clean_data)
+
+# Putting the cleaned data into a df.
+clean_data <- data.frame(clean_data, stringsAsFactors=FALSE)
+```
