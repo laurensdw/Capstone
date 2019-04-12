@@ -9,31 +9,34 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
-library(stringi)
-library(RWeka)
-library(qdap)
-library(tm)
-library(NLP)
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+suppressPackageStartupMessages(library(plotly))
+suppressPackageStartupMessages(library(stringi))
+suppressPackageStartupMessages(library(RWeka))
+suppressPackageStartupMessages(library(qdap))
+suppressPackageStartupMessages(library(tm))
+suppressPackageStartupMessages(library(NLP))
+suppressPackageStartupMessages(library(wordcloud))
+setwd("~/coursera_local/Data")
 ```
 
 ## Loading in Data
 
 First, we'll load in the data:
 
-```{r cars}
+```{r, warning=FALSE}
 # Blogs file
-blogs<-file("./en_US/en_US.blogs.txt","r")
+blogs<-file("C:/Users/ldewit/Documents/coursera_local/Data/en_US/en_US.blogs.txt","r")
 blogs_lines<-readLines(blogs)
 close(blogs)
 
 # News file
-news<-file("./en_US/en_US.news.txt","r")
+news<-file("C:/Users/ldewit/Documents/coursera_local/Data/en_US/en_US.news.txt","r")
 news_lines<-readLines(news)
 close(news)
 
 # Twitter file
-twitter<-file("./en_US/en_US.twitter.txt","r")
+twitter<-file("C:/Users/ldewit/Documents/coursera_local/Data/en_US/en_US.twitter.txt","r")
 twitter_lines<-readLines(twitter)
 close(twitter)
 ```
@@ -100,3 +103,42 @@ clean_data <- stripWhitespace(clean_data)
 # Putting the cleaned data into a df.
 clean_data <- data.frame(clean_data, stringsAsFactors=FALSE)
 ```
+
+## Creation of Document-Term Matrix
+
+```{r}
+#Creating the corpus from the sample files
+corpus <- Corpus(VectorSource(clean_data))
+#Constructing Document-Term Matrix
+DTM <- TermDocumentMatrix(corpus, control = list(minWordLength = 1))
+#Converting DTM to Matrix
+DTM_matrix <- as.matrix(DTM)
+#Sorting matrix - words with the highest number of apearances on the top
+DTM_ordered <- sort(rowSums(DTM_matrix), decreasing = TRUE)
+```
+
+## Visualization
+
+The most common words:
+
+```{r}
+head(DTM_ordered)
+```
+
+These are all are generally common words. With a wordcloud we can extract words that are generally less common
+but have a frequent appearance in the data we are analyzing.
+
+Now displayed in a wordcloud:
+
+```{r, warning=FALSE}
+words<-WordTokenizer(clean_data)
+wordcloud(words, scale=c(5,0.1), max.words=80, random.order=FALSE)
+```
+
+## Conclusions
+
+By running the explorative analysis abvoe we can conclude the following:
+
+- Preprocessing and cleaning the datasets was made possible.
+- By cleaning the and merging the datasets in the same way we can come up with a prediction model that covers all information supplied by the different data sets.
+
