@@ -1,0 +1,40 @@
+---
+title: "Data Science Capstone"
+author: "Laurens de Wit"
+date: "23rd of April 2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Processing and Predicting Text
+
+This document is meant to describe and explain the NLP techniques that were used to create [this](https://laurensdewit.shinyapps.io/capstone_course_project/ "Link to Dashboard") dashboard. The image found below is an example of what the dashboard can do.
+
+```{r, out.width = "600px"}
+knitr::include_graphics("thank_you.png")
+```
+
+## Overview
+
+- The goal of this presentation is to elaborate on what the application that was built does.
+- Data were obtained from HC Corpora.
+- After the data were obtained they were merged, cleaned, explored, visualized and tokenized. Once these steps were taken a prediction model was built.
+
+## Methodology
+
+- During cleaning, the text was converted to lower case, punctuation was removed, and numbers were removed.
+- During tokenization, data was summarized into n-grams. Please see [this link](https://en.wikipedia.org/wiki/N-gram "Link to Wikipedia") for a good description of an N-gram.
+- Once the N-grams were built they could be used as input for the model. I decided to go with unigrams, bigrams, trigrams, and quadrams.
+
+## Description of Application
+
+- The application predicts the next word in a piece of text (sentence) entered by the user.
+- The word is obtained from an n-gram matrix. This matrix is either tokenized as unigram, bigam, trigram, or quadram.
+- As the user decides to change his/her input, the field of the predicted word is changed dynamically.
+
+
+
+
